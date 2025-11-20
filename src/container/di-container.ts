@@ -13,6 +13,7 @@ import { DeleteMemoryUseCase } from '../application/use-cases/delete-memory';
 import { ManageObservationsUseCase } from '../application/use-cases/manage-observations';
 import { ManageRelationsUseCase } from '../application/use-cases/manage-relations';
 import { XenovaEmbeddingService } from '../infrastructure/services/embedding-service';
+import { SchemaService } from '../infrastructure/services/schema-service';
 import { getVectorConfig } from '../config';
 
 // Configuration constants
@@ -29,6 +30,7 @@ export class DIContainer {
   
   // Services
   private embeddingService!: XenovaEmbeddingService;
+  private schemaService!: SchemaService;
   
   // Repositories
   private memoryRepository!: CompositeMemoryRepository;
@@ -67,7 +69,8 @@ export class DIContainer {
 
   private initializeServices(): void {
     this.embeddingService = new XenovaEmbeddingService();
-    
+    this.schemaService = new SchemaService(this.sessionFactory, this.driverManager);
+
     // Note: Search orchestrator removed - SimplifiedSearchService used directly in repositories
   }
 
@@ -118,6 +121,10 @@ export class DIContainer {
   // Public getters for services
   getEmbeddingService(): XenovaEmbeddingService {
     return this.embeddingService;
+  }
+
+  getSchemaService(): SchemaService {
+    return this.schemaService;
   }
 
   getDatabaseManager(): CleanDatabaseManager {

@@ -6,11 +6,13 @@ config();
 
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { 
-  McpMemoryHandler, 
-  McpObservationHandler, 
-  McpRelationHandler, 
-  McpDatabaseHandler 
+import {
+  McpMemoryHandler,
+  McpObservationHandler,
+  McpRelationHandler,
+  McpDatabaseHandler,
+  McpSchemaHandler,
+  McpHelpHandler
 } from "./application/mcp-handlers";
 import {
   UnifiedMemoryStoreHandler,
@@ -37,25 +39,29 @@ const getHandlers = async (): Promise<HandlerSet> => {
       const observationHandler = new McpObservationHandler();
       const relationHandler = new McpRelationHandler();
       const databaseHandler = new McpDatabaseHandler();
-      
+      const schemaHandler = new McpSchemaHandler();
+      const helpHandler = new McpHelpHandler();
+
       // Initialize unified handlers
       const unifiedStoreHandler = new UnifiedMemoryStoreHandler(memoryHandler, relationHandler);
       const unifiedFindHandler = new UnifiedMemoryFindHandler(memoryHandler);
       const unifiedModifyHandler = new UnifiedMemoryModifyHandler(
-        memoryHandler, 
-        observationHandler, 
+        memoryHandler,
+        observationHandler,
         relationHandler
       );
-      
+
       // Only initialize database if we have connection config
       const hasDbConfig = process.env.NEO4J_URI || process.env.NEO4J_USERNAME;
       if (hasDbConfig) {
         const container = DIContainer.getInstance();
         await container.initializeDatabase();
       }
-      
-      return { 
+
+      return {
         databaseHandler,
+        schemaHandler,
+        helpHandler,
         unifiedStoreHandler,
         unifiedFindHandler,
         unifiedModifyHandler
