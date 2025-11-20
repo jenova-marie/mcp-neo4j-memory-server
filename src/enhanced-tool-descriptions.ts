@@ -4,13 +4,17 @@
  */
 
 export const ENHANCED_TOOL_DESCRIPTIONS = {
-  memory_store: `Create memories with observations and relationships. **Pattern**: Search→Create→Connect. **Observations**: Self-contained context units (what/when/where/why/impact). **LocalIds**: Cross-references within THIS request only. **Limits**: 50 memories, 200 relations. **Quality**: Each observation = complete detective notes answering setting/action/actors/evidence/impact/significance.`,
-  
+  memory_store: `Create memories with observations and relationships. **MANDATORY WORKFLOW**: 1) Call memory_schema() to discover conventions, 2) Call memory_validate() before storing, 3) Store if valid. **Pattern**: Search→Validate→Create→Connect. **Observations**: Self-contained context units (what/when/where/why/impact). **LocalIds**: Cross-references within THIS request only. **Limits**: 50 memories, 200 relations. **Quality**: Each observation = complete detective notes answering setting/action/actors/evidence/impact/significance.`,
+
   memory_find: `Unified search/retrieval. **Query**: text, IDs array, or "*". **Context**: minimal (lists), full (everything), relations-only (graph). **Temporal**: createdAfter "7d"/"2024-01-15". **Graph**: traverseFrom + relations + depth. **Always search before creating**. Updates access timestamps for analytics.`,
-  
+
   memory_modify: `Update/delete memories, manage observations/relations. **Operations**: update (properties), delete (cascade), add-observations (append insights), create-relations (link existing). **Atomic**: All succeed or all fail. **Quality**: One substantial observation per session - complete context stories, not fragments.`,
-  
-  database_switch: `Switch active database context (creates if missing). ALL subsequent operations use this DB. Call once per session/project. Like 'cd' for memories. **Session-scoped**: Establishes context for entire workflow, not per-operation.`
+
+  database_switch: `Switch active database context (creates if missing). ALL subsequent operations use this DB. Call once per session/project. Like 'cd' for memories. **Session-scoped**: Establishes context for entire workflow, not per-operation.`,
+
+  memory_schema: `Get or set schema definition for current database. **ALWAYS CALL THIS FIRST** before any memory operations to discover conventions. **GET**: Call with no params to retrieve current schema. **SET**: Pass schema object to validate and store with auto-versioning. **Breaking changes** (removed types/relations that orphan data) require force=true. Fast validation - only checks for orphaned data, not data validity.`,
+
+  memory_validate: `Validate memory data against current database schema before storing. **MANDATORY**: Call this before EVERY memory_store() operation to catch errors early. **Cached**: Schema loaded once per database for performance. **Returns**: {valid: boolean, errors: string[], hasSchema: boolean, message: string}. **No schema**: Returns hasSchema=false with message. **Type not in schema**: Returns hasSchema=true but validation skipped. **Workflow**: memory_schema() → memory_validate() → memory_store().`
 };
 
 export const ENHANCED_PARAMETER_DESCRIPTIONS = {
