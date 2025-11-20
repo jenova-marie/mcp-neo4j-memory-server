@@ -7,30 +7,16 @@ import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { MCPValidationError, MCPErrorCodes } from '../../infrastructure/errors';
 
-// Get help directory from environment (set by entry point) or try common locations
+// Get help directory - resolved lazily at runtime, not at module load time
 const getHelpDirectory = (): string => {
-  // First check if entry point set the help directory
-  if (process.env.MCP_HELP_DIR && fs.existsSync(process.env.MCP_HELP_DIR)) {
+  // Entry point sets this from import.meta.url
+  if (process.env.MCP_HELP_DIR) {
     return process.env.MCP_HELP_DIR;
   }
 
-  // Fallback to common locations
-  const possiblePaths = [
-    path.join(process.cwd(), 'dist', 'help'),
-    path.join(process.cwd(), 'src', 'help'),
-  ];
-
-  for (const dir of possiblePaths) {
-    if (fs.existsSync(dir)) {
-      return dir;
-    }
-  }
-
-  // Last fallback
-  return path.join(process.cwd(), 'dist', 'help');
+  // Fallback shouldn't be needed, but just in case
+  throw new Error('MCP_HELP_DIR not set - entry point failed to initialize');
 };
-
-const HELP_DIR = getHelpDirectory();
 
 // Map of available help topics to their filenames
 const HELP_FILES: Record<string, string> = {
@@ -77,14 +63,15 @@ export class McpHelpHandler {
       );
     }
 
-    // Read help file from resolved help directory
-    const filePath = path.join(HELP_DIR, fileName);
+    // Read help file from resolved help directory (lazy resolution)
+    const helpDir = getHelpDirectory();
+    const filePath = path.join(helpDir, fileName);
 
     if (!fs.existsSync(filePath)) {
       throw new MCPValidationError(
-        `Help file not found: ${fileName} (searched in: ${HELP_DIR})`,
+        `Help file not found: ${fileName} (searched in: ${helpDir})`,
         MCPErrorCodes.RESOURCE_NOT_FOUND,
-        { topic, fileName, helpDir: HELP_DIR }
+        { topic, fileName, helpDir }
       );
     }
 

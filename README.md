@@ -91,19 +91,30 @@ docker run \
 
 ## Unified Tools
 
-The server provides **4 unified MCP tools** that integrate automatically with Claude:
+The server provides **8 comprehensive MCP tools** that integrate automatically with Claude:
 
+### Core Memory Operations
 - `memory_store` - Create memories with observations and immediate relations in ONE operation
 - `memory_find` - Unified search/retrieval with semantic search, direct ID lookup, date filtering, and graph traversal
 - `memory_modify` - Comprehensive modification operations (update, delete, observations, relations)
 - `database_switch` - Switch database context for isolated environments
+
+### Schema Validation
+- `memory_schema` - Get/set schema definitions with auto-versioning and breaking change detection
+- `memory_validate` - Validate memory data against schema before storing
+
+### Agent Onboarding
+- `init` - Comprehensive getting started guide for agents (mandatory workflow, best practices, templates)
+- `help` - Access documentation system with domain-specific schema templates
+
+See [`src/help/`](src/help/) for complete template documentation
 
 ## Memory Structure
 
 ```json
 {
   "id": "dZ$abc123",
-  "name": "Project Alpha", 
+  "name": "Project Alpha",
   "memoryType": "project",
   "metadata": {"status": "active", "priority": "high"},
   "observations": [
@@ -115,6 +126,68 @@ The server provides **4 unified MCP tools** that integrate automatically with Cl
   }
 }
 ```
+
+## Schema System
+
+The server includes an **optional schema validation system** that enables agents to discover, validate, and evolve their memory structures autonomously.
+
+### Why Use Schemas?
+
+- **Self-Validating Agents** - Validate data before storing, catch errors early
+- **Zero-Shot Discovery** - New agents discover domain conventions instantly
+- **Consistent Multi-Session** - Schemas persist across conversations
+- **Safe Evolution** - Breaking change detection prevents data loss
+- **Multi-Domain Intelligence** - Single agent adapts to different domains
+
+### Meta-Schema Pattern
+
+The server uses a flexible **meta-schema** that can represent any domain:
+
+```javascript
+Memory {
+  memoryType: string      // YOUR domain entity type (e.g., "task", "paper", "class")
+  metadata: JSON          // YOUR domain-specific properties
+  observations: [...]     // Narrative context
+}
+```
+
+Think of it as **property graph simulation** - every `memoryType` creates a new entity type, every `relationType` creates a new semantic relationship.
+
+### Agent Workflow
+
+```javascript
+// 1. Discover existing schema
+memory_schema()  // Returns schema definition or null
+
+// 2. Validate before storing
+memory_validate({ memoryType: "task", metadata: {...} })
+
+// 3. Store with confidence
+memory_store({ memories: [...] })
+```
+
+### Ready-to-Use Templates
+
+The `help` tool provides instant access to domain-specific templates:
+
+- `help({ topic: "project" })` - Software development (classes, functions, modules)
+- `help({ topic: "testing" })` - QA workflows (test suites, bugs, test runs)
+- `help({ topic: "research" })` - Academic research (papers, authors, citations)
+- `help({ topic: "tasks" })` - Task management (epics, tasks, sprints)
+- `help({ topic: "design" })` - Custom schema design guide
+
+**Complete Documentation:**
+- Technical guide: [`SCHEMA.md`](SCHEMA.md)
+- Detailed docs: [`src/help/SCHEMA.md`](src/help/SCHEMA.md)
+- Templates: [`src/help/SCHEMA.*.md`](src/help/)
+
+### Schema Storage
+
+Schemas are stored as regular Memory nodes with `memoryType: "_schema_definition"`, giving them:
+- Version tracking
+- Observation history
+- Full search capabilities
+- Same persistence as all other memories
 
 ## System Prompt
 
