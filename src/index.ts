@@ -4,6 +4,13 @@
 import { config } from "dotenv";
 config();
 
+// Set help directory based on script location
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+process.env.MCP_HELP_DIR = join(__dirname, 'help');
+
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import {
