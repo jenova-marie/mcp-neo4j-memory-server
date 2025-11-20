@@ -13,7 +13,7 @@
   "scripts": {
     "dev": "pnpm build && npx @modelcontextprotocol/inspector pnpm start",
     "dev:http": "pnpm build && node dist/http/server.mjs",
-    "build": "tsup && shx chmod +x dist/index.mjs && shx chmod +x dist/http/server.mjs",
+    "build": "tsup && shx chmod +x dist/index.mjs && shx chmod +x dist/http/server.mjs && shx mkdir -p dist/help && shx cp -r src/help/*.md dist/help/",
     "start": "node dist/index.mjs",
     "start:http": "node dist/http/server.mjs",
     "test": "vitest run",
