@@ -6,3 +6,5 @@ export { McpMemoryHandler } from './mcp-memory-handler';
 export { McpObservationHandler } from './mcp-observation-handler';
 export { McpRelationHandler } from './mcp-relation-handler';
 export { McpDatabaseHandler } from './mcp-database-handler';
+export { McpSchemaHandler } from './mcp-schema-handler';
+export { McpHelpHandler } from './mcp-help-handler';
